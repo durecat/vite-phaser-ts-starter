@@ -11,11 +11,41 @@ const GameConfig = {
 	parent: "app",
 	scene: {
 		preload() {
-			this.load.bitmapFont("arcade", "assets/font/arcade.png", "assets/font/arcade.xml")
+			this.load.spritesheet('tiles', 'assets/colored.png', {
+				frameWidth: 16,
+				frameHeight: 16,
+				spacing: 1
+			})
 		},
 		create() {
-			this.helloText = this.add.bitmapText(400, 300, "arcade", "Hello Phaser").setOrigin(0.5)
 			this.cursors = this.input.keyboard.createCursorKeys()
+			let level = [
+				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+				[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+				[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+				[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+				[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+				[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+				[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+				[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+				[1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+			];
+			const wall = 554
+			const floor = 0
+			level = level.map(r => r.map(t => t === 1 ? wall : floor))
+
+			const tileSize = 16
+			const config = {
+				data: level,
+				tileWidth: tileSize,
+				tileHeight: tileSize
+			}
+
+			const map = this.make.tilemap(config)
+			const tileSet = map.addTilesetImage('tiles', 'tiles', tileSize, tileSize, 0, 1)
+
+			const ground = map.createStaticLayer(0, tileSet, 0, 0)
 		},
 		update() {
 			if(this.cursors.left.isDown) {
