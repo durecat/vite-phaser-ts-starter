@@ -3,6 +3,7 @@ import "../assets/style.css";
 import dungeon from "./dungeon";
 import tm from "./turnManager";
 import PlayerCharacter from "./player";
+import BasicMonster from "./monster";
 
 const scene = {
 	preload() {
@@ -14,10 +15,14 @@ const scene = {
 		});
 	},
 	create() {
-		this.cursors = this.input.keyboard.createCursorKeys();
 		dungeon.initialize(this);
-		let player = new PlayerCharacter(15, 15);
-		tm.addEntity(player);
+		dungeon.player = new PlayerCharacter(15, 15);
+		tm.addEntity(dungeon.player);
+		tm.addEntity(new BasicMonster(20, 20));
+		tm.addEntity(new BasicMonster(20, 10));
+		tm.addEntity(new BasicMonster(76, 10));
+		tm.addEntity(new BasicMonster(29, 24));
+		tm.addEntity(new BasicMonster(29, 20));
 	},
 	update() {
 		if (tm.over()) {

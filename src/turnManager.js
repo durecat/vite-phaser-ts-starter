@@ -1,21 +1,22 @@
 const tm = {
-	interval: 150,
 	entities: new Set(),
-	lastCall: Date.now(),
 	addEntity: (entity) => tm.entities.add(entity),
 	removeEntity: (entity) => tm.entities.remove(entity),
-	refresh: () => tm.entities.forEach((e) => e.refresh()),
+	refresh: () => {
+		tm.entities.forEach((e) => e.refresh());
+		tm.currentIndex = 0;
+	},
+	currentIndex: 0,
 	turn: () => {
-		let now = Date.now();
-		let limit = tm.lastCall + tm.interval;
-		if (now > limit) {
-			for (let e of tm.entities) {
-				if (!e.over()) {
-					e.turn();
-					break;
-				}
+		if (tm.entities.size > 0) {
+			let entities = [...tm.entities];
+			let e = entities[tm.currentIndex];
+
+			if (!e.over()) {
+				e.turn();
+			} else {
+				tm.currentIndex++;
 			}
-			tm.lastCall = Date.now();
 		}
 	},
 	over: () => [...tm.entities].every((e) => e.over()),
