@@ -1,36 +1,7 @@
 import "phaser";
 import "../assets/style.css";
-import dungeon from "./dungeon";
-import tm from "./turnManager";
-import PlayerCharacter from "./player";
-import BasicMonster from "./monster";
-
-const scene = {
-	preload() {
-		// load tiles ...
-		this.load.spritesheet("tiles", "assets/colored.png", {
-			frameWidth: 16,
-			frameHeight: 16,
-			spacing: 1,
-		});
-	},
-	create() {
-		dungeon.initialize(this);
-		dungeon.player = new PlayerCharacter(15, 15);
-		tm.addEntity(dungeon.player);
-		tm.addEntity(new BasicMonster(20, 20));
-		tm.addEntity(new BasicMonster(20, 10));
-		tm.addEntity(new BasicMonster(76, 10));
-		tm.addEntity(new BasicMonster(29, 24));
-		tm.addEntity(new BasicMonster(29, 20));
-	},
-	update() {
-		if (tm.over()) {
-			tm.refresh();
-		}
-		tm.turn();
-	},
-};
+import ui from "./ui";
+import world from "./world";
 
 const GameConfig = {
 	title: "ExampleGame",
@@ -40,7 +11,7 @@ const GameConfig = {
 	height: 50 * 16,
 	type: Phaser.AUTO,
 	parent: "app",
-	scene: scene,
+	scene: [world, ui],
 	input: {
 		keyboard: true,
 	},
