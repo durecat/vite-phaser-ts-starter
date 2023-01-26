@@ -22,16 +22,16 @@ const GameConfig = {
 			debug: false,
 		},
 	},
-	backgroundColor: "#000",
+	backgroundColor: "#472d3c",
 	render: { pixelArt: false, antialias: true },
-	scale: {
-		mode: Phaser.Scale.FIT,
-		autoCenter: Phaser.Scale.CENTER_BOTH,
-		// `fullscreenTarget` must be defined for phones to not have
-		// a small margin during fullscreen.
-		fullscreenTarget: "app",
-		expandParent: false,
-	},
+	// scale: {
+	// 	mode: Phaser.Scale.FIT,
+	// 	autoCenter: Phaser.Scale.CENTER_BOTH,
+	// 	// `fullscreenTarget` must be defined for phones to not have
+	// 	// a small margin during fullscreen.
+	// 	fullscreenTarget: "app",
+	// 	expandParent: false,
+	// },
 };
 
 export class Game extends Phaser.Game {
