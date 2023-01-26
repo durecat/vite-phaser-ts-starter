@@ -1,7 +1,14 @@
 const tm = {
+	numberOfMonsters: 0,
 	entities: new Set(),
-	addEntity: (entity) => tm.entities.add(entity),
-	removeEntity: (entity) => tm.entities.remove(entity),
+	addEntity: (entity) => {
+		tm.entities.add(entity)
+		if(entity.type === "enemy") tm.numberOfMonsters++;
+	},
+	removeEntity: (entity) =>{
+		tm.entities.delete(entity);
+		if(entity.type === "enemy") tm.numberOfMonsters--;
+	},
 	refresh: () => {
 		tm.entities.forEach((e) => e.refresh());
 		tm.currentIndex = 0;

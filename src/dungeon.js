@@ -25,6 +25,9 @@ const dungeon = {
 		const tileset = map.addTilesetImage("tiles", "tiles", this.tileSize, this.tileSize, 0, 1);
 		this.map = map.createDynamicLayer(0, tileset, 0, 0);
 	},
+	numberOfMonsters: function() {
+		return tm.numberOfMonsters;
+	},
 	isWalkableTile: function (x, y) {
 		// check all entities.
 		let allEntities = [...tm.entities];
@@ -49,7 +52,7 @@ const dungeon = {
 		return false;
 	},
 	removeEntity: function (entity) {
-		tm.entities.delete(entity);
+		tm.removeEntity(entity);
 		entity.sprite.destroy();
 		delete entity.sprite;
 		entity.onDestroy();

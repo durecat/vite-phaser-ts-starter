@@ -1,5 +1,5 @@
 import PF from "pathfinding";
-import dungeon from "./dungeon.js";
+import dungeon from "../dungeon.js";
 
 export default class BasicMonster {
 	constructor(x, y) {

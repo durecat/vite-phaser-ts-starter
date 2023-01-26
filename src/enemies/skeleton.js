@@ -72,6 +72,12 @@ export default class Skeleton {
 		this.UIsprite.setAlpha(0.2);
 		this.UItext.setAlpha(0.2);
 
+		// Display congrats message
+		if (dungeon.numberOfMonsters() <= 0) {
+			alert("Congrats! You WON!");
+			location.reload();
+		}
+
     // loot
     let x = this.x;
     let y = this.y;
