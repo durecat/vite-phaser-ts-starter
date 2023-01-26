@@ -3,6 +3,7 @@ import dungeon from "../dungeon.js";
 import Gem from "../items/gem.js";
 import LongSword from "../items/longSword.js";
 import Potion from "../items/potion.js";
+import HealthPotion from "../items/healthPotion.js";
 import tm from "../turnManager.js";
 
 export default class Skeleton {
@@ -75,7 +76,7 @@ export default class Skeleton {
     // loot
     let x = this.x;
     let y = this.y;
-    let possibleLoot = [ false, false, Gem, LongSword, Potion ];
+    let possibleLoot = [false, false, Gem, LongSword, Potion, HealthPotion];
 
     let lootIndex = Phaser.Math.Between(0, possibleLoot.length - 1)
     if (possibleLoot[lootIndex]) {

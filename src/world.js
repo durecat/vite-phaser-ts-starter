@@ -6,6 +6,7 @@ import CursedGem from "./items/cursedGem.js";
 import Gem from "./items/gem.js";
 import LongSword from "./items/longSword.js";
 import Potion from "./items/potion.js";
+import HealthPotion from "./items/healthPotion.js";
 
 const world = {
 	key: "world-scene",
@@ -34,6 +35,7 @@ const world = {
     tm.addEntity(new Potion(18, 18));
     tm.addEntity(new LongSword(18, 22));
     tm.addEntity(new Gem(21, 21));
+    tm.addEntity(new HealthPotion(15, 21));
 
 		// Set camera, causes game viewport
 		// to shrink on the right side freeing
