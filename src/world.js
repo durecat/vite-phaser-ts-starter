@@ -1,7 +1,11 @@
 import dungeon from "./dungeon.js";
 import tm from "./turnManager.js";
 import PlayerCharacter from "./player.js";
-import BasicMonster from "./monster.js";
+import Skeleton from "./enemies/skeleton.js";
+import CursedGem from "./items/cursedGem.js";
+import Gem from "./items/gem.js";
+import LongSword from "./items/longSword.js";
+import Potion from "./items/potion.js";
 
 const world = {
 	key: "world-scene",
@@ -21,11 +25,15 @@ const world = {
 		dungeon.player = new PlayerCharacter(15, 15);
 
 		tm.addEntity(dungeon.player);
-		tm.addEntity(new BasicMonster(20, 20));
-		tm.addEntity(new BasicMonster(20, 10));
-		tm.addEntity(new BasicMonster(76, 10));
-		tm.addEntity(new BasicMonster(29, 24));
-		tm.addEntity(new BasicMonster(29, 20));
+		tm.addEntity(new Skeleton(20, 20));
+		tm.addEntity(new Skeleton(10, 10));
+		tm.addEntity(new Skeleton(76, 10));
+		tm.addEntity(new Skeleton(29, 24));
+		tm.addEntity(new Skeleton(29, 20));
+    tm.addEntity(new CursedGem(15, 20));
+    tm.addEntity(new Potion(18, 18));
+    tm.addEntity(new LongSword(18, 22));
+    tm.addEntity(new Gem(21, 21));
 
 		// Set camera, causes game viewport
 		// to shrink on the right side freeing
