@@ -25,8 +25,9 @@ const world = {
 		// Load game entities
 		// dungeon.player = new classes.Warrior(15, 15)
 		// dungeon.player = new classes.Dwarf(15, 15)
+		dungeon.player = new classes.Cleric(15, 15)
 		// dungeon.player = new classes.Elf(15, 15)
-		dungeon.player = new classes.Wizard(15, 15)
+		// dungeon.player = new classes.Wizard(15, 15);
 
 		tm.addEntity(dungeon.player);
 		tm.addEntity(new Skeleton(20, 20));
@@ -34,11 +35,11 @@ const world = {
 		tm.addEntity(new Skeleton(15, 10));
 		tm.addEntity(new Skeleton(29, 24));
 		tm.addEntity(new Skeleton(29, 20));
-    tm.addEntity(new CursedGem(15, 20));
-    tm.addEntity(new Potion(18, 18));
-    tm.addEntity(new LongSword(18, 22));
-    tm.addEntity(new Gem(21, 21));
-    tm.addEntity(new HealthPotion(15, 21));
+		tm.addEntity(new CursedGem(15, 20));
+		tm.addEntity(new Potion(18, 18));
+		tm.addEntity(new LongSword(18, 22));
+		tm.addEntity(new Gem(21, 21));
+		tm.addEntity(new HealthPotion(15, 21));
 
 		// Set camera, causes game viewport
 		// to shrink on the right side freeing
