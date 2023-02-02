@@ -1,6 +1,6 @@
 import dungeon from "./dungeon.js";
 import tm from "./turnManager.js";
-import PlayerCharacter from "./player.js";
+import classes from "./classes.js";
 import Skeleton from "./enemies/skeleton.js";
 import CursedGem from "./items/cursedGem.js";
 import Gem from "./items/gem.js";
@@ -23,7 +23,10 @@ const world = {
 		dungeon.initialize(this);
 
 		// Load game entities
-		dungeon.player = new PlayerCharacter(15, 15);
+		// dungeon.player = new classes.Warrior(15, 15)
+		// dungeon.player = new classes.Dwarf(15, 15)
+		// dungeon.player = new classes.Elf(15, 15)
+		dungeon.player = new classes.Wizard(15, 15)
 
 		tm.addEntity(dungeon.player);
 		tm.addEntity(new Skeleton(20, 20));

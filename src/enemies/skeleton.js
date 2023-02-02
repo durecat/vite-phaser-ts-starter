@@ -29,6 +29,10 @@ export default class Skeleton {
 		return 1;
 	}
 
+	protection() {
+		return 0;
+	}
+	
 	turn() {
 		let oldX = this.x;
 		let oldY = this.y;
@@ -73,13 +77,13 @@ export default class Skeleton {
 		this.UIsprite.setAlpha(0.2);
 		this.UItext.setAlpha(0.2);
 
-    // loot
-    let x = this.x;
-    let y = this.y;
-    let possibleLoot = [false, false, Gem, LongSword, Potion, HealthPotion];
+		// loot
+		let x = this.x;
+		let y = this.y;
+		let possibleLoot = [false, false, Gem, LongSword, Potion, HealthPotion];
 
-    let lootIndex = Phaser.Math.Between(0, possibleLoot.length - 1)
-    if (possibleLoot[lootIndex]) {
+		let lootIndex = Phaser.Math.Between(0, possibleLoot.length - 1);
+		if (possibleLoot[lootIndex]) {
 			let item = possibleLoot[lootIndex];
 			tm.addEntity(new item(x, y));
 			dungeon.log(`${this.name} drops ${item.name}.`);
