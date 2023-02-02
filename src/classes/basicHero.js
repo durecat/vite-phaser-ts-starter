@@ -43,7 +43,7 @@ export default class BasicHero {
 			item.active = !item.active;
 
 			if (item.active) {
-				dungeon.log(`${this.name} equips ${item.name}: ${item.description}.`);
+				dungeon.log(`${this.name} ${item.weapon ? 'equips' : 'uses'} ${item.name}: ${item.description}.`);
 				item.equip(itemNumber);
 			}
 		}

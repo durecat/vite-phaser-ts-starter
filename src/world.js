@@ -31,7 +31,7 @@ const world = {
 		tm.addEntity(dungeon.player);
 		tm.addEntity(new Skeleton(20, 20));
 		tm.addEntity(new Skeleton(10, 10));
-		tm.addEntity(new Skeleton(76, 10));
+		tm.addEntity(new Skeleton(15, 10));
 		tm.addEntity(new Skeleton(29, 24));
 		tm.addEntity(new Skeleton(29, 20));
     tm.addEntity(new CursedGem(15, 20));

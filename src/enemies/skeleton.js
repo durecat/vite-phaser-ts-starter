@@ -32,7 +32,7 @@ export default class Skeleton {
 	protection() {
 		return 0;
 	}
-	
+
 	turn() {
 		let oldX = this.x;
 		let oldY = this.y;
@@ -81,6 +81,12 @@ export default class Skeleton {
 		let x = this.x;
 		let y = this.y;
 		let possibleLoot = [false, false, Gem, LongSword, Potion, HealthPotion];
+		
+		// Display congrats message
+		if (dungeon.numberOfMonsters() <= 0) {
+			alert("Congrats! You WON!");
+			location.reload();
+		}
 
 		let lootIndex = Phaser.Math.Between(0, possibleLoot.length - 1);
 		if (possibleLoot[lootIndex]) {
