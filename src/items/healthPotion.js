@@ -8,12 +8,12 @@ export default class HealthPotion extends GenericItem {
 		this.tile = 730;
 		this.name = "Health Potion";
 		this.health = 3;
-		this.description = "A potion that increase health."
+		this.description = ""
 
 		dungeon.initializeEntity(this);
 	}
 	equip(itemNumber) {
-		dungeon.log(`A health portion increase your health to ${this.health}.`)
+		dungeon.log(`A health portion recharges your health by ${this.health}.`)
 		dungeon.player.healthPoints += this.health;
 		dungeon.player.removeItem(itemNumber)
 	}
