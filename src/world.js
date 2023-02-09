@@ -1,12 +1,8 @@
 import dungeon from "./dungeon.js";
 import tm from "./turnManager.js";
 import classes from "./classes.js";
-import Skeleton from "./enemies/skeleton.js";
-import CursedGem from "./items/cursedGem.js";
-import Gem from "./items/gem.js";
-import LongSword from "./items/longSword.js";
-import Potion from "./items/potion.js";
-import HealthPotion from "./items/healthPotion.js";
+import { getRandomItem } from "./items.js";
+import { getRandomEnemy } from "./enemies.js";
 
 const world = {
 	key: "world-scene",
@@ -30,16 +26,19 @@ const world = {
 		// dungeon.player = new classes.Wizard(15, 15);
 
 		tm.addEntity(dungeon.player);
-		tm.addEntity(new Skeleton(20, 20));
-		tm.addEntity(new Skeleton(10, 10));
-		tm.addEntity(new Skeleton(15, 10));
-		tm.addEntity(new Skeleton(29, 24));
-		tm.addEntity(new Skeleton(29, 20));
-		tm.addEntity(new CursedGem(15, 20));
-		tm.addEntity(new Potion(18, 18));
-		tm.addEntity(new LongSword(18, 22));
-		tm.addEntity(new Gem(21, 21));
-		tm.addEntity(new HealthPotion(15, 21));
+		let monsterCount = 10
+		while(monsterCount > 0) {
+			let tile = dungeon.randomWalkableTile()
+			tm.addEntity(getRandomEnemy(tile.x, tile.y))
+			monsterCount--
+		}
+
+		let itemCount = 10
+		while(itemCount > 0) {
+			let tile = dungeon.randomWalkableTile()
+			tm.addEntity(getRandomItem(tile.x, tile.y))
+			itemCount--
+		}
 
 		// Set camera, causes game viewport
 		// to shrink on the right side freeing

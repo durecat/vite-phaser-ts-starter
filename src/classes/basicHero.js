@@ -1,7 +1,9 @@
 import dungeon from "../dungeon";
+import Taggable from "../taggable";
 
-export default class BasicHero {
+export default class BasicHero extends Taggable {
 	constructor(x, y) {
+		super(x, y);
 		this.name = "The Hero";
 		this.movementPoints = 1;
 		this.actionPoints = 1;
@@ -13,10 +15,12 @@ export default class BasicHero {
 		this.type = "character";
 		this.items = [];
 
+		dungeon.scene.input.keyboard.addCapture(["SPACE", "UP", "DOWN", "LEFT", "RIGHT"]);
 		dungeon.scene.input.keyboard.on("keyup", (event) => {
 			if (!this.over()) {
 				this.processInput(event);
 			}
+			event.stopPropagation();
 		});
 
 		dungeon.scene.input.on("pointerup", (event) => {
@@ -43,9 +47,11 @@ export default class BasicHero {
 			item.active = !item.active;
 
 			if (item.active) {
-				dungeon.log(`${this.name} ${item.weapon ? 'equips' : 'uses'} ${item.name}: ${item.description}.`);
-				item.equip(itemNumber);
+				dungeon.log(`${this.name} ${item.weapon ? "equips" : "uses"} ${item.name}: ${item.description}.`);
+				item.equip(itemNumber, this);
 			}
+
+			// this.refreshStatTexts();
 		}
 	}
 
@@ -83,19 +89,27 @@ export default class BasicHero {
 
 	attack() {
 		const items = this.equippedItems();
-		const combineDamage = (total, item) => total + item.damage();
+		const combineDamage = (total, item) => {
+			// console.log(item.name, item.active, item.damage())
+			return total + item.damage();
+		}
 
 		const damage = items.reduce(combineDamage, 0);
 		return damage;
 	}
 
-  protection() {
-    const items = this.equippedItems();
-    const combineProtection = (total, item) => total + item.protection()
+	protection() {
+		const items = this.equippedItems();
+		const combineProtection = (total, item) => total + item.protection();
 
-    const protection = items.reduce(combineProtection, 0)
-    return protection
-  }
+		const protection = items.reduce(combineProtection, 0);
+		return protection;
+	}
+
+	refresh() {
+		this.movementPoints = 1;
+		this.actionPoints = 1;
+	}
 
 	processInput(event) {
 		let oldX = this.x;
@@ -146,8 +160,7 @@ export default class BasicHero {
 				// Check if entity at destination is an enemy
 				if (entity && entity.type === "enemy" && this.actionPoints > 0) {
 					const currentWeapon = this.currentWeapon();
-					const rangedAttack = currentWeapon.range() > 0 ? currentWeapon.attackTile || currentWeapon.tile : false;
-					dungeon.attackEntity(this, entity, rangedAttack);
+					dungeon.attackEntity(this, entity, currentWeapon);
 					this.actionPoints -= 1;
 					this.movementPoints -= 1;
 				}
@@ -179,10 +192,11 @@ export default class BasicHero {
 		if (entity && entity.type === "enemy" && this.actionPoints > 0) {
 			const currentWeapon = this.currentWeapon();
 			const rangedAttack = currentWeapon.range() > 0 ? currentWeapon.attackTile || currentWeapon.tile : false;
-      const tint = currentWeapon.tint || false
+			// const tint = currentWeapon.tint || false;
 			const distance = dungeon.distanceBetweenEntities(this, entity);
 			if (rangedAttack && distance <= currentWeapon.range()) {
-				dungeon.attackEntity(this, entity, rangedAttack, tint);
+				// dungeon.attackEntity(this, entity, rangedAttack, tint);
+				dungeon.attackEntity(this, entity, currentWeapon);
 				this.actionPoints -= 1;
 			}
 		}
@@ -221,17 +235,19 @@ export default class BasicHero {
 		});
 
 		// Character stats
-		this.UIStatsText = this.UIscene.add.text(
+		this.UIstatsText = this.UIscene.add.text(
 			x + 20,
 			y + 20,
-			`Hp: ${this.healthPoints}\nMp: ${this.movementPoints}\nAp: ${this.actionPoints}`,
+			`Hp: ${this.healthPoints}\nMp: ${this.movementPoints}\tAp: ${
+				this.actionPoints
+			}\nAtk: ${this.attack()}\tDef: ${this.protection()}`,
 			{
 				font: "12px Arial",
 				fill: "#cfc6b8",
 			}
 		);
 
-		accumulatedHeight += this.UIStatsText.height + this.UIsprite.height;
+		accumulatedHeight += this.UIstatsText.height + this.UIsprite.height;
 
 		// Inventory screen
 		let itemsPerRow = 5;
@@ -260,11 +276,16 @@ export default class BasicHero {
 			if (!item.UIsprite) {
 				let x = this.UIitems[i].x + 10;
 				let y = this.UIitems[i].y + 10;
-				item.UIsprite = this.UIscene.add.sprite(x, y, "tiles", item.tile);
-        if(item.tint) {
-          item.UIsprite.tint = item.tint
-          item.UIsprite.tintFIll = true
-        }
+				item.UIsprite = this.UIscene.add.sprite(x, y, "tiles", item.tile).setInteractive({ useHandCursor: true });
+				item.UIsprite.on("pointerup", (pointer) => {
+					if (pointer.leftButtonReleased()) {
+						dungeon.describeEntity(item);
+					}
+				});
+				if (item.tint) {
+					item.UIsprite.tint = item.tint;
+					item.UIsprite.tintFIll = true;
+				}
 			}
 			if (!item.active) {
 				item.UIsprite.setAlpha(0.5);
@@ -273,6 +294,23 @@ export default class BasicHero {
 				item.UIsprite.setAlpha(1);
 				this.UIitems[i].setStrokeStyle(1, 0xffffff);
 			}
+		}
+
+		if (this.UIstatsText) {
+			this.UIstatsText.setText(
+				// `Hp: ${this.healthPoints}\nMp: ${this.movementPoints}\tAp: ${this.actionPoints}\nAtk: ${this.attack()}\tDef: ${this.protection()}`
+				`Hp: ${this.healthPoints}\nMp: ${this.movementPoints}\nAp: ${this.actionPoints}`
+			);
+		}
+	}
+
+	refreshStatTexts() {
+		if (this.UIstatsText) {
+			this.UIstatsText.setText(
+				`Hp: ${this.healthPoints}\nMp: ${this.movementPoints}\tAp: ${
+					this.actionPoints
+				}\nAtk: ${this.attack()}\tDef: ${this.protection()}`
+			);
 		}
 	}
 }

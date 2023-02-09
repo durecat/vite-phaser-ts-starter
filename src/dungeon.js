@@ -41,6 +41,17 @@ const dungeon = {
 		let tileAtDestination = dungeon.map.getTileAt(x, y);
 		return tileAtDestination.index !== dungeon.sprites.wall;
 	},
+	randomWalkableTile: function () {
+		let x = Phaser.Math.Between(0, dungeon.level[0].length - 1)
+		let y = Phaser.Math.Between(0, dungeon.level.length - 1)
+		let tileAtDestination = dungeon.map.getTileAt(x, y)
+		while(typeof tileAtDestination == 'undefined' || tileAtDestination.index == dungeon.sprites.wall) {
+			x = Phaser.Math.Between(0, dungeon.level[0].length - 1);
+			y = Phaser.Math.Between(0, dungeon.level.length - 1);
+			tileAtDestination = dungeon.map.getTileAt(x, y);
+		}
+		return { x, y }
+	},
 	entityAtTile: function (x, y) {
 		let allEntities = [...tm.entities];
 		for (let e = 0; e < allEntities.length; e++) {
@@ -73,6 +84,15 @@ const dungeon = {
 			}
 		}
 	},
+	describeEntity: function (entity) {
+		if(entity) {
+			let name = entity.name
+			let description = entity.description || ""
+			let tags = entity._tags ? entity._tags.map(t => `#${t}`).join(", ") : ""
+
+			dungeon.log(`${name}\n${tags}\n${description}`)
+		}
+	},
 	moveEntityTo: function (entity, x, y) {
 		entity.moving = true;
 		entity.x = x;
@@ -101,11 +121,14 @@ const dungeon = {
 			return false;
 		}
 	},
-	attackEntity: function (attacker, victim, rangedAttack = false, tint = false) {
+	attackEntity: function (attacker, victim, weapon) {
 		attacker.moving = true;
 		attacker.tweens = attacker.tweens || 0;
 		attacker.tweens += 1;
 		
+		let rangedAttack = weapon.range() ? weapon.attackTile : false
+		let tint = weapon.range() && weapon.tint ? weapon.tint : false
+
 		if(!rangedAttack) {
 			this.scene.tweens.add({
 				targets: attacker.sprite,
@@ -118,9 +141,12 @@ const dungeon = {
 					let attack = attacker.attack();
 					let protection = victim.protection();
 					let damage = attack - protection;
+					this.log(`${victim.name} defends with ${protection}.`)
 					if(damage > 0) {
 						victim.healthPoints -= damage;
-						this.log(`${attacker.name} does ${damage} damage to ${victim.name}.`);
+						this.log(`${attacker.name} does ${damage} damage to ${victim.name} with ${weapon.name}.`);
+						weapon.executeTag("damagedEntity", victim)
+
 						if(victim.healthPoints <= 0) {
 							this.removeEntity(victim);
 						}
@@ -134,7 +160,7 @@ const dungeon = {
 				delay: attacker.tweens * 200,
 				yoyo: true,
 			});
-		} else {
+		} else { // ranged attack
 			const x = this.map.tileToWorldX(attacker.x)
 			const y = this.map.tileToWorldX(attacker.y)
 			const sprite = dungeon.scene.add.sprite(x, y, "tiles", rangedAttack).setOrigin(0)
@@ -153,10 +179,13 @@ const dungeon = {
 					let attack = attacker.attack();
 					let protection = victim.protection();
 					let damage = attack - protection;
+					this.log(`${victim.name} defends with ${protection}.`);
 
 					if (damage > 0) {
 						victim.healthPoints -= damage;
-						this.log(`${attacker.name} does ${damage} damage to ${victim.name}.`);
+						this.log(`${attacker.name} does ${damage} damage to ${victim.name} with ${weapon.name}.`);
+						weapon.executeTag("damagedEntity", victim)
+						
 						if (victim.healthPoints <= 0) {
 							this.removeEntity(victim);
 						}
