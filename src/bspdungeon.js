@@ -107,12 +107,70 @@ function splitArea(area) {
 }
 
 export default class BSPDungeon {
+	constructor(config) {
+		let levels = [];
+
+		for (let c = 0; c < config.levels; c++) {
+			levels.push(new BSPLevel(config.width, config.height, config.iterations));
+		}
+
+		this.levels = levels;
+		this.currentLevel = 0;
+	}
+
+	goDown() {
+		if (this.currentLevel < this.levels.length - 1) {
+			this.currentLevel++;
+		} else {
+			console.error("can't go down, already at the bottom of the dungeon.");
+		}
+	}
+
+	goUp() {
+		if (this.currentLevel > 0) {
+			this.currentLevel--;
+		} else {
+			console.error("can't go up, already at top of the dungeon.");
+		}
+	}
+
+	getCurrentLevel() {
+		return this.levels[this.currentLevel].toLevelData();
+	}
+
+	getRooms() {
+		return this.levels[this.currentLevel].getRooms();
+	}
+
+	getTree() {
+		return this.levels[this.currentLevel].tree;
+	}
+
+	getStairs() {
+		let stairs = {};
+
+		if (this.currentLevel < this.levels.length - 1) {
+			stairs.down = this.levels[this.currentLevel].down;
+		}
+
+		if (this.currentLevel > 0) {
+			stairs.up = this.levels[this.currentLevel].up;
+		}
+		return stairs;
+	}
+}
+
+class BSPLevel {
 	constructor(width, height, iterations) {
 		this.rootArea = new DArea(0, 0, width, height);
+
 		this.tree = makeTree(this.rootArea, iterations);
+
 		this.initializeLevelData();
+
 		this.makeRooms();
 		this.makeCorridors();
+		this.addStairs();
 	}
 
 	initializeLevelData() {
@@ -124,6 +182,7 @@ export default class BSPDungeon {
 				lvl[y][x] = 1;
 			}
 		}
+
 		this.levelData = lvl;
 	}
 
@@ -172,12 +231,44 @@ export default class BSPDungeon {
 	toLevelData() {
 		return this.levelData;
 	}
-  
+
 	getRooms() {
 		let rooms = [];
 		this.tree.forEachLeaf((area) => {
 			rooms.push(area.room);
 		});
 		return rooms;
+	}
+
+	addStairs() {
+		// Place stairs down in the room at the
+		// right-most tree node.
+		let node = this.tree.right;
+		while (node.right !== false) {
+			node = node.right;
+		}
+		let r = node.area.room;
+		let dx = Phaser.Math.Between(r.x + 1, r.x + r.w - 1);
+		let dy = Phaser.Math.Between(r.y + 1, r.y + r.h - 1);
+
+		this.down = {
+			x: dx,
+			y: dy,
+		};
+
+		// Place stairs up in the room at the
+		// left-most tree node.
+		node = this.tree.left;
+		while (node.left !== false) {
+			node = node.left;
+		}
+		r = node.area.room;
+		let ux = Phaser.Math.Between(r.x + 1, r.x + r.w - 1);
+		let uy = Phaser.Math.Between(r.y + 1, r.y + r.h - 1);
+
+		this.up = {
+			x: ux,
+			y: uy,
+		};
 	}
 }

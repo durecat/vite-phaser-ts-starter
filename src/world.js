@@ -1,9 +1,9 @@
 import dungeon from "./dungeon.js";
-import BSPDungeon from "./bspdungeon.js";
 import tm from "./turnManager.js";
 import classes from "./classes.js";
 import { getRandomItem } from "./items.js";
 import { getRandomEnemy } from "./enemies.js";
+import Stairs from "./items/stairs.js";
 
 const world = {
 	key: "world-scene",
@@ -16,16 +16,27 @@ const world = {
 		});
 	},
 	create: function () {
-		let dg = new BSPDungeon(80, 50, 4);
-		let level = dg.toLevelData();
-		dungeon.initialize(this, level);
+		this.events.once("dungeon-changed", () => {
+			this.scene.restart();
+		});
+
+		dungeon.initialize(this);
 
 		// get rooms
-		let rooms = dg.getRooms();
+		let rooms = dungeon.rooms;
+
+		// Add stairs
+		let stairs = dungeon.stairs;
+		if (stairs.down) {
+			tm.addEntity(new Stairs(stairs.down.x, stairs.down.y, "down"));
+		}
+		if (stairs.up) {
+			tm.addEntity(new Stairs(stairs.up.x, stairs.up.y, "up"));
+		}
 
 		// Place player in the room at the
 		// left-most tree node.
-		let node = dg.tree.left;
+		let node = dungeon.tree.left;
 		while (node.left !== false) {
 			node = node.left;
 		}
@@ -33,16 +44,21 @@ const world = {
 		let p = dungeon.randomWalkableTileInRoom(r.x, r.y, r.w, r.h);
 
 		// Load game entities
-		dungeon.player = new classes.Elf(p.x, p.y);
-		// dungeon.player = new classes.Warrior(p.x, p.y)
-		// dungeon.player = new classes.Dwarf(p.x, p.y)
-		// dungeon.player = new classes.Cleric(p.x, p.y)
-		// dungeon.player = new classes.Wizard(p.x, p.y);
+		if (!dungeon.player) {
+			dungeon.player = new classes.Elf(p.x, p.y);
+			// dungeon.player = new classes.Warrior(p.x, p.y)
+			// dungeon.player = new classes.Dwarf(p.x, p.y)
+			// dungeon.player = new classes.Cleric(p.x, p.y)
+			// dungeon.player = new classes.Wizard(p.x, p.y);
+		} else {
+			dungeon.player.x = p.x;
+			dungeon.player.y = p.y;
+			dungeon.player.refresh();
+			dungeon.initializeEntity(dungeon.player);
+		}
 		tm.addEntity(dungeon.player);
 
 		rooms.forEach((room) => {
-			let area = room.w * room.h;
-
 			let monsterCount = 0;
 			let itemCount = 0;
 
@@ -83,7 +99,7 @@ const world = {
 				itemCount--;
 			}
 		});
-		
+
 		// Set camera, causes game viewport
 		// to shrink on the right side freeing
 		// space for the UI scene.

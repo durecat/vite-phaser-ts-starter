@@ -12,7 +12,7 @@ export default class CursedGem extends GenericItem {
     this.cursed = true
 
     dungeon.initializeEntity(this)
-    this.sprite.tint = Phaser.Display.Color.GetColor(223, 188, 25);
+    // this.sprite.tint = Phaser.Display.Color.GetColor(223, 188, 25);
   }
   turn() {
     if (dungeon.player.items.includes(this)) {

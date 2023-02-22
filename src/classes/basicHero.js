@@ -14,7 +14,9 @@ export default class BasicHero extends Taggable {
 		this.moving = false;
 		this.type = "character";
 		this.items = [];
+	}
 
+	setEvents() {
 		dungeon.scene.input.keyboard.addCapture(["SPACE", "UP", "DOWN", "LEFT", "RIGHT"]);
 		dungeon.scene.input.keyboard.on("keyup", (event) => {
 			if (!this.over()) {
@@ -92,7 +94,7 @@ export default class BasicHero extends Taggable {
 		const combineDamage = (total, item) => {
 			// console.log(item.name, item.active, item.damage())
 			return total + item.damage();
-		}
+		};
 
 		const damage = items.reduce(combineDamage, 0);
 		return damage;
@@ -124,6 +126,18 @@ export default class BasicHero extends Taggable {
 		if (!isNaN(Number(key))) {
 			if (key === 0) key = 10;
 			this.toggleItem(key - 1);
+		}
+
+		// go down the dungeon
+		if (event.key == "d") {
+			dungeon.goDown();
+			return;
+		}
+
+		// go up the dungeon
+		if (event.key == "u") {
+			dungeon.goUp();
+			return;
 		}
 
 		// Pass the turn
@@ -175,6 +189,15 @@ export default class BasicHero extends Taggable {
 					newX = oldX;
 					newY = oldY;
 				}
+
+				// Check if entity at destination is a stair
+				if (entity && entity.type == "stairs") {
+					if (entity.direction == "down") {
+						dungeon.goDown();
+					} else {
+						dungeon.goUp();
+					}
+				}
 			}
 
 			if (newX !== oldX || newY !== oldY) {
@@ -205,11 +228,11 @@ export default class BasicHero extends Taggable {
 	over() {
 		let isOver = this.movementPoints <= 0 && !this.moving;
 
-		if (isOver && this.UIHeader) {
-			this.UIHeader.setColor("#cfc6b8");
+		if (isOver && this.UIheader) {
+			this.UIheader.setColor("#cfc6b8");
 			this.actionPoints = 0;
 		} else {
-			this.UIHeader.setColor("#fff");
+			this.UIheader.setColor("#fff");
 		}
 
 		return isOver;
@@ -229,7 +252,7 @@ export default class BasicHero extends Taggable {
 		// Character sprite and name
 		this.UIsprite = this.UIscene.add.sprite(x, y, "tiles", this.tile).setOrigin(0);
 
-		this.UIHeader = this.UIscene.add.text(x + 20, y, this.name, {
+		this.UIheader = this.UIscene.add.text(x + 20, y, this.name, {
 			font: "16px Arial",
 			color: "#cfc6b8",
 		});
@@ -297,7 +320,7 @@ export default class BasicHero extends Taggable {
 		}
 
 		if (this.UIstatsText) {
-			//TODO dure - display atk and def 
+			//TODO dure - display atk and def
 			this.UIstatsText.setText(
 				// `Hp: ${this.healthPoints}\nMp: ${this.movementPoints}\tAp: ${this.actionPoints}\nAtk: ${this.attack()}\tDef: ${this.protection()}`
 				`Hp: ${this.healthPoints}\nMp: ${this.movementPoints}\nAp: ${this.actionPoints}`
@@ -313,5 +336,19 @@ export default class BasicHero extends Taggable {
 				}\nAtk: ${this.attack()}\tDef: ${this.protection()}`
 			);
 		}
+	}
+
+	cleanup() {
+		delete this.UIheader;
+		delete this.UIstatsText;
+		delete this.UIsprite;
+		delete this.UIitems;
+		delete this.UIscene;
+		delete this.sprite;
+		this.items.forEach((i) => {
+			if (i.UIsprite) {
+				delete i.UIsprite;
+			}
+		});
 	}
 }

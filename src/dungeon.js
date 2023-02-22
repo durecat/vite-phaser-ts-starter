@@ -1,5 +1,6 @@
 import PF from "pathfinding"
 import tm from "./turnManager.js";
+import BSPDungeon from "./bspdungeon.js";
 
 const dungeon = {
 	msgs: [],
@@ -8,24 +9,70 @@ const dungeon = {
 		wall: 554,
 	},
 	tileSize: 16,
-	initialize: function (scene, level) {
+	initialized: false,
+	initialize: function (scene) {
+		// create the dungeon only once.
+		if (!this.initialized) {
+			console.log("dungeon not initialized");
+			let dungeonConfig = {
+				width: 80,
+				height: 50,
+				iterations: 4,
+				levels: 5,
+			};
+			this.dungeon = new BSPDungeon(dungeonConfig);
+			this.initialized = true;
+		}
+
+		console.log(`dungeon module: current dungeon level`, this.dungeon.currentLevel);
+		this.level = this.dungeon.getCurrentLevel();
+		this.rooms = this.dungeon.getRooms();
+		this.tree = this.dungeon.getTree();
+		this.stairs = this.dungeon.getStairs();
 		this.scene = scene;
-		this.level = level;
-		let levelWithTiles = level.map((r) => r.map((t) => (t === 1 ? this.sprites.wall : this.sprites.floor)));
+		this.levelWithTiles = this.level.map((r) => r.map((t) => (t == 1 ? this.sprites.wall : this.sprites.floor)));
 
 		// Draw the tilemap
 		const config = {
-			data: levelWithTiles,
+			data: this.levelWithTiles,
 			tileWidth: this.tileSize,
 			tileHeight: this.tileSize,
 		};
 
 		const map = scene.make.tilemap(config);
 		const tileset = map.addTilesetImage("tiles", "tiles", this.tileSize, this.tileSize, 0, 1);
-		this.map = map.createDynamicLayer(0, tileset, 0, 0);
+		this.map = map.createLayer(0, tileset, 0, 0);
 	},
-	numberOfMonsters: function () {
-		return tm.numberOfMonsters;
+	cleanup: function () {
+		this.msgs = [];
+		dungeon.player.cleanup();
+		tm.cleanup();
+	},
+	goDown: function () {
+		this.scene.cameras.main.once(
+			"camerafadeoutcomplete",
+			() => {
+				this.cleanup();
+				this.dungeon.goDown();
+
+				this.scene.events.emit("dungeon-changed");
+			},
+			this
+		);
+		this.scene.cameras.main.fadeOut(1000, 0, 0, 0);
+	},
+	goUp: function () {
+		this.scene.cameras.main.once(
+			"camerafadeoutcomplete",
+			() => {
+				this.cleanup();
+				this.dungeon.goUp();
+
+				this.scene.events.emit("dungeon-changed");
+			},
+			this
+		);
+		this.scene.cameras.main.fadeOut(1000, 0, 0, 0);
 	},
 	isWalkableTile: function (x, y) {
 		// check all entities.
@@ -92,6 +139,7 @@ const dungeon = {
 				entity.sprite.tint = entity.tint;
 				entity.sprite.tintFill = true;
 			}
+			entity.setEvents();
 		}
 	},
 	describeEntity: function (entity) {

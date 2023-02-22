@@ -1,14 +1,8 @@
 const tm = {
-	numberOfMonsters: 0,
 	entities: new Set(),
-	addEntity: (entity) => {
-		tm.entities.add(entity)
-		if(entity.type === "enemy") tm.numberOfMonsters++;
-	},
-	removeEntity: (entity) =>{
-		tm.entities.delete(entity);
-		if(entity.type === "enemy") tm.numberOfMonsters--;
-	},
+	addEntity: (entity) => tm.entities.add(entity),
+	removeEntity: (entity) => tm.entities.remove(entity),
+	removeAllEntities: () => (tm.entities = new Set()),
 	refresh: () => {
 		tm.entities.forEach((e) => e.refresh());
 		tm.currentIndex = 0;
@@ -27,5 +21,16 @@ const tm = {
 		}
 	},
 	over: () => [...tm.entities].every((e) => e.over()),
+	cleanup: () => {
+		tm.entities.forEach((e) => {
+			if (e.sprite) {
+				e.sprite.destroy();
+			}
+			if (e.UIsprite) {
+				e.UIsprite.destroy();
+			}
+		});
+		tm.removeAllEntities();
+	},
 };
 export default tm;

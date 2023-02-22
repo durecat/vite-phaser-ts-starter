@@ -7,43 +7,45 @@ import GenericItem from "../items/GenericItem.js";
 
 export default class BasicEnemy extends Taggable {
 	constructor(x, y) {
-		super(x, y)
+		super(x, y);
 		this.name = "Basic Enemy";
 		this.movementPoints = 1;
 		this.actionPoints = 1;
 		this.healthPoints = 1;
-		this.maxHealthPoints = this.healthPoints
-		this.moving = false
-		this.weapon = new GenericItem()
+		this.maxHealthPoints = this.healthPoints;
+		this.moving = false;
+		this.weapon = new GenericItem();
 
 		this.refreshRates = {
 			movementPoints: 1,
 			actionPoints: 1,
-			healthPoints: 0
-		}
+			healthPoints: 0,
+		};
 
 		this.damage = {
 			max: 4,
-			min: 1
-		}
+			min: 1,
+		};
 
 		this.defense = {
 			max: 0,
-			min: 0
-		}
+			min: 0,
+		};
 
-		this.loot = []
-		this.x = x
-		this.y = y
-		this.tile = 26
-		this.type = "enemy"
+		this.loot = [];
+		this.x = x;
+		this.y = y;
+		this.tile = 26;
+		this.type = "enemy";
 	}
 
+	setEvents() {}
+	
 	refresh() {
 		this.movementPoints = this.refreshRates.movementPoints;
 		this.actionPoints = this.refreshRates.actionPoints;
-		if(this.refreshRates.healthPoints > 0 && this.healthPoints <= this.maxHealthPoints) {
-			this.healthPoints += this.refreshRates.healthPoints
+		if (this.refreshRates.healthPoints > 0 && this.healthPoints <= this.maxHealthPoints) {
+			this.healthPoints += this.refreshRates.healthPoints;
 		}
 	}
 
@@ -52,7 +54,7 @@ export default class BasicEnemy extends Taggable {
 	}
 
 	protection() {
-		return Phaser.Math.Between(this.defense.min, this.defense.max)
+		return Phaser.Math.Between(this.defense.min, this.defense.max);
 	}
 
 	turn() {}
@@ -73,12 +75,12 @@ export default class BasicEnemy extends Taggable {
 		this.UIsprite.setAlpha(0.2);
 		this.UItext.setAlpha(0.2);
 
-		let x = this.x
-		let y = this.y
-		let item = getRandomItem(x, y, 1, 1)
+		let x = this.x;
+		let y = this.y;
+		let item = getRandomItem(x, y, 1, 1);
 
-		tm.addEntity(item)
-		dungeon.log(`${this.name} drops ${item.name}.`)
+		tm.addEntity(item);
+		dungeon.log(`${this.name} drops ${item.name}.`);
 	}
 
 	createUI(config) {
@@ -86,25 +88,27 @@ export default class BasicEnemy extends Taggable {
 		let x = config.x;
 		let y = config.y;
 
-		this.UIsprite = scene.add.sprite(x, y, "tiles", this.tile).setOrigin(0).setInteractive({ useHandCursor: true});
+		this.UIsprite = scene.add.sprite(x, y, "tiles", this.tile).setOrigin(0).setInteractive({ useHandCursor: true });
 
 		if (this.tint) {
-			this.UIsprite.tint = this.tint
+			this.UIsprite.tint = this.tint;
 		}
 
-		this.UIsprite.on("pointerup", pointer => {
-			if(pointer.leftButtonReleased()) {
-				dungeon.describeEntity(this)
+		this.UIsprite.on("pointerup", (pointer) => {
+			if (pointer.leftButtonReleased()) {
+				dungeon.describeEntity(this);
 			}
-		})
+		});
 
-		this.UItext = scene.add.text(x + 20, y, this.name, { font: "12px Arial", fill: "#cfc6b8" }).setInteractive({ useHandCursor: true});
+		this.UItext = scene.add
+			.text(x + 20, y, this.name, { font: "12px Arial", fill: "#cfc6b8" })
+			.setInteractive({ useHandCursor: true });
 		this.UItext.on("pointerup", (pointer) => {
 			if (pointer.leftButtonReleased()) {
 				dungeon.describeEntity(this);
 			}
 		});
-		
+
 		return 30;
 	}
 }

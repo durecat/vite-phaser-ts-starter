@@ -2,7 +2,7 @@ import Taggable from "../taggable";
 
 export default class GenericItem extends Taggable {
 	constructor(x, y) {
-		super(x, y)
+		super(x, y);
 		this.active = false;
 		this.type = "item";
 		this.weapon = false;
@@ -15,6 +15,8 @@ export default class GenericItem extends Taggable {
 		}
 	}
 
+	setEvents() {}
+
 	damage() {
 		return 0;
 	}
@@ -26,7 +28,7 @@ export default class GenericItem extends Taggable {
 	range() {
 		return 0;
 	}
-	
+
 	turn() {}
 
 	equip() {}
