@@ -9,7 +9,7 @@ const ui = {
 
 		this.scene.get("world-scene").events.on("createUI", () => {
 			let iterator = tm.entities.values();
-			let x = 80 * 16 - 190;
+			let x = (80 * 16) - 190;
 			let y = 10;
 
 			for (let entity of iterator) {
@@ -36,6 +36,7 @@ const ui = {
 			});
 
 			this.createdUI = true;
+			dungeon.ui = this;
 		});
 	},
 	update: function () {

@@ -297,6 +297,7 @@ export default class BasicHero extends Taggable {
 		}
 
 		if (this.UIstatsText) {
+			//TODO dure - display atk and def 
 			this.UIstatsText.setText(
 				// `Hp: ${this.healthPoints}\nMp: ${this.movementPoints}\tAp: ${this.actionPoints}\nAtk: ${this.attack()}\tDef: ${this.protection()}`
 				`Hp: ${this.healthPoints}\nMp: ${this.movementPoints}\nAp: ${this.actionPoints}`

@@ -1,5 +1,4 @@
 import PF from "pathfinding"
-import level from "./level";
 import tm from "./turnManager.js";
 
 const dungeon = {
@@ -9,7 +8,7 @@ const dungeon = {
 		wall: 554,
 	},
 	tileSize: 16,
-	initialize: function (scene) {
+	initialize: function (scene, level) {
 		this.scene = scene;
 		this.level = level;
 		let levelWithTiles = level.map((r) => r.map((t) => (t === 1 ? this.sprites.wall : this.sprites.floor)));
@@ -25,7 +24,7 @@ const dungeon = {
 		const tileset = map.addTilesetImage("tiles", "tiles", this.tileSize, this.tileSize, 0, 1);
 		this.map = map.createDynamicLayer(0, tileset, 0, 0);
 	},
-	numberOfMonsters: function() {
+	numberOfMonsters: function () {
 		return tm.numberOfMonsters;
 	},
 	isWalkableTile: function (x, y) {
@@ -42,15 +41,26 @@ const dungeon = {
 		return tileAtDestination.index !== dungeon.sprites.wall;
 	},
 	randomWalkableTile: function () {
-		let x = Phaser.Math.Between(0, dungeon.level[0].length - 1)
-		let y = Phaser.Math.Between(0, dungeon.level.length - 1)
-		let tileAtDestination = dungeon.map.getTileAt(x, y)
-		while(typeof tileAtDestination == 'undefined' || tileAtDestination.index == dungeon.sprites.wall) {
+		let x = Phaser.Math.Between(0, dungeon.level[0].length - 1);
+		let y = Phaser.Math.Between(0, dungeon.level.length - 1);
+		let tileAtDestination = dungeon.map.getTileAt(x, y);
+		while (typeof tileAtDestination == "undefined" || tileAtDestination.index == dungeon.sprites.wall) {
 			x = Phaser.Math.Between(0, dungeon.level[0].length - 1);
 			y = Phaser.Math.Between(0, dungeon.level.length - 1);
 			tileAtDestination = dungeon.map.getTileAt(x, y);
 		}
-		return { x, y }
+		return { x, y };
+	},
+	randomWalkableTileInRoom: function (x, y, w, h) {
+		let rx = Phaser.Math.Between(x, x + w - 1);
+		let ry = Phaser.Math.Between(y, y + h - 1);
+		let tileAtDestination = dungeon.map.getTileAt(rx, ry);
+		while (typeof tileAtDestination == "undefined" || tileAtDestination.index == dungeon.sprites.wall) {
+			rx = Phaser.Math.Between(x, x + w - 1);
+			ry = Phaser.Math.Between(y, y + h - 1);
+			tileAtDestination = dungeon.map.getTileAt(rx, ry);
+		}
+		return { x: rx, y: ry };
 	},
 	entityAtTile: function (x, y) {
 		let allEntities = [...tm.entities];
@@ -78,19 +88,19 @@ const dungeon = {
 			let y = this.map.tileToWorldY(entity.y);
 			entity.sprite = this.scene.add.sprite(x, y, "tiles", entity.tile);
 			entity.sprite.setOrigin(0);
-			if(entity.tint){
-				entity.sprite.tint = entity.tint
-				entity.sprite.tintFill = true
+			if (entity.tint) {
+				entity.sprite.tint = entity.tint;
+				entity.sprite.tintFill = true;
 			}
 		}
 	},
 	describeEntity: function (entity) {
-		if(entity) {
-			let name = entity.name
-			let description = entity.description || ""
-			let tags = entity._tags ? entity._tags.map(t => `#${t}`).join(", ") : ""
+		if (entity) {
+			let name = entity.name;
+			let description = entity.description || "";
+			let tags = entity._tags ? entity._tags.map((t) => `#${t}`).join(", ") : "";
 
-			dungeon.log(`${name}\n${tags}\n${description}`)
+			dungeon.log(`${name}\n${tags}\n${description}`);
 		}
 	},
 	moveEntityTo: function (entity, x, y) {
@@ -125,11 +135,11 @@ const dungeon = {
 		attacker.moving = true;
 		attacker.tweens = attacker.tweens || 0;
 		attacker.tweens += 1;
-		
-		let rangedAttack = weapon.range() ? weapon.attackTile : false
-		let tint = weapon.range() && weapon.tint ? weapon.tint : false
 
-		if(!rangedAttack) {
+		let rangedAttack = weapon.range() ? weapon.attackTile : false;
+		let tint = weapon.range() && weapon.tint ? weapon.tint : false;
+
+		if (!rangedAttack) {
 			this.scene.tweens.add({
 				targets: attacker.sprite,
 				onComplete: () => {
@@ -141,13 +151,13 @@ const dungeon = {
 					let attack = attacker.attack();
 					let protection = victim.protection();
 					let damage = attack - protection;
-					this.log(`${victim.name} defends with ${protection}.`)
-					if(damage > 0) {
+					this.log(`${victim.name} defends with ${protection}.`);
+					if (damage > 0) {
 						victim.healthPoints -= damage;
 						this.log(`${attacker.name} does ${damage} damage to ${victim.name} with ${weapon.name}.`);
-						weapon.executeTag("damagedEntity", victim)
+						weapon.executeTag("damagedEntity", victim);
 
-						if(victim.healthPoints <= 0) {
+						if (victim.healthPoints <= 0) {
 							this.removeEntity(victim);
 						}
 					}
@@ -160,16 +170,17 @@ const dungeon = {
 				delay: attacker.tweens * 200,
 				yoyo: true,
 			});
-		} else { // ranged attack
-			const x = this.map.tileToWorldX(attacker.x)
-			const y = this.map.tileToWorldX(attacker.y)
-			const sprite = dungeon.scene.add.sprite(x, y, "tiles", rangedAttack).setOrigin(0)
+		} else {
+			// ranged attack
+			const x = this.map.tileToWorldX(attacker.x);
+			const y = this.map.tileToWorldX(attacker.y);
+			const sprite = dungeon.scene.add.sprite(x, y, "tiles", rangedAttack).setOrigin(0);
 
-			if(tint) {
-				sprite.tint = tint
-				sprite.tintFill = true
+			if (tint) {
+				sprite.tint = tint;
+				sprite.tintFill = true;
 			}
-			
+
 			this.scene.tweens.add({
 				targets: sprite,
 				onComplete: () => {
@@ -184,8 +195,8 @@ const dungeon = {
 					if (damage > 0) {
 						victim.healthPoints -= damage;
 						this.log(`${attacker.name} does ${damage} damage to ${victim.name} with ${weapon.name}.`);
-						weapon.executeTag("damagedEntity", victim)
-						
+						weapon.executeTag("damagedEntity", victim);
+
 						if (victim.healthPoints <= 0) {
 							this.removeEntity(victim);
 						}
