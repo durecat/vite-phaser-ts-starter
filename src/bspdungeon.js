@@ -118,20 +118,20 @@ export default class BSPDungeon {
 		this.currentLevel = 0;
 	}
 
+	isAbleToGoDown() {
+		return this.currentLevel < this.levels.length - 1
+	}
+
+	isAbleToGoUp() {
+		return this.currentLevel > 0;
+	}
+
 	goDown() {
-		if (this.currentLevel < this.levels.length - 1) {
-			this.currentLevel++;
-		} else {
-			console.error("can't go down, already at the bottom of the dungeon.");
-		}
+		this.currentLevel++;
 	}
 
 	goUp() {
-		if (this.currentLevel > 0) {
-			this.currentLevel--;
-		} else {
-			console.error("can't go up, already at top of the dungeon.");
-		}
+		this.currentLevel--;
 	}
 
 	getCurrentLevel() {

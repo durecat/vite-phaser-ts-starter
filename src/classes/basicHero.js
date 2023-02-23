@@ -249,7 +249,7 @@ export default class BasicHero extends Taggable {
 		let accumulatedHeight = 0;
 
 		// Character sprite and name
-		this.UIsprite = this.UIscene.add.sprite(x, y, "tiles", this.tile).setOrigin(0);
+		this.UIsprite = this.UIscene.add.sprite(x, y, dungeon.mapKey, this.tile).setOrigin(0);
 
 		this.UIheader = this.UIscene.add.text(x + 20, y, this.name, {
 			font: "16px Arial",
@@ -298,7 +298,7 @@ export default class BasicHero extends Taggable {
 			if (!item.UIsprite) {
 				let x = this.UIitems[i].x + 10;
 				let y = this.UIitems[i].y + 10;
-				item.UIsprite = this.UIscene.add.sprite(x, y, "tiles", item.tile).setInteractive({ useHandCursor: true });
+				item.UIsprite = this.UIscene.add.sprite(x, y, dungeon.mapKey, item.tile).setInteractive({ useHandCursor: true });
 				item.UIsprite.on("pointerup", (pointer) => {
 					if (pointer.leftButtonReleased()) {
 						dungeon.describeEntity(item);

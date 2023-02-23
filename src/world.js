@@ -10,7 +10,10 @@ const world = {
 	key: "world-scene",
 	active: false,
 	preload: function () {
-		this.load.spritesheet("tiles", "../assets/colored_transparent.png", {
+		let r = (Math.random() + 1).toString(36).substring(7);
+		let mapKey = `tiles_${r}`;
+		dungeon.mapKey = mapKey;
+		const spritesheet = this.load.spritesheet(mapKey, "../assets/colored_transparent.png", {
 			frameWidth: 16,
 			frameHeight: 16,
 			spacing: 1,
@@ -25,7 +28,7 @@ const world = {
 
 		// get rooms
 		let rooms = dungeon.rooms;
-
+		
 		// Add stairs
 		let stairs = dungeon.stairs;
 		if (stairs.down) {
@@ -47,7 +50,7 @@ const world = {
 		// Load game entities
 		if (!dungeon.player) {
 			dungeon.player = new classes[dungeon.hero](p.x, p.y)
-			addAmulet(p.x + 1, p.y + 1);
+			// addAmulet(p.x + 1, p.y + 1);
 		} else {
 			dungeon.player.x = p.x;
 			dungeon.player.y = p.y;

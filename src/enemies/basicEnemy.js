@@ -88,7 +88,7 @@ export default class BasicEnemy extends Taggable {
 		let x = config.x;
 		let y = config.y;
 
-		this.UIsprite = scene.add.sprite(x, y, "tiles", this.tile).setOrigin(0).setInteractive({ useHandCursor: true });
+		this.UIsprite = scene.add.sprite(x, y, dungeon.mapKey, this.tile).setOrigin(0).setInteractive({ useHandCursor: true });
 
 		if (this.tint) {
 			this.UIsprite.tint = this.tint;

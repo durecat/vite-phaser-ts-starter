@@ -40,8 +40,10 @@ const dungeon = {
 			tileHeight: this.tileSize,
 		};
 
-		const map = scene.make.tilemap(config);
-		const tileset = map.addTilesetImage("tiles", "tiles", this.tileSize, this.tileSize, 0, 1);
+		const map = this.scene.make.tilemap(config);
+		const tileset = map.addTilesetImage(this.mapKey, this.mapKey, this.tileSize, this.tileSize, 0, 1);
+		
+		this.tilemap = map;
 		this.map = map.createLayer(0, tileset, 0, 0);
 
 		// This will cause all the functions to run for each level that is initialized
@@ -53,8 +55,13 @@ const dungeon = {
 		tm.cleanup();
 	},
 	goDown: function () {
+		if (!this.dungeon.isAbleToGoDown()) {
+			console.error("can't go down, already at the bottom of the dungeon.");
+			return;
+		}
+
 		this.scene.cameras.main.once(
-			"camerafadeoutcomplete",
+			Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
 			() => {
 				this.cleanup();
 				this.dungeon.goDown();
@@ -66,8 +73,13 @@ const dungeon = {
 		this.scene.cameras.main.fadeOut(1000, 0, 0, 0);
 	},
 	goUp: function () {
+		if (!this.dungeon.isAbleToGoUp()) {
+			console.error("can't go up, already at top of the dungeon.");
+			return;
+		}
+
 		this.scene.cameras.main.once(
-			"camerafadeoutcomplete",
+			Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
 			() => {
 				this.cleanup();
 				this.dungeon.goUp();
@@ -137,7 +149,7 @@ const dungeon = {
 		if (entity.x && entity.y) {
 			let x = this.map.tileToWorldX(entity.x);
 			let y = this.map.tileToWorldY(entity.y);
-			entity.sprite = this.scene.add.sprite(x, y, "tiles", entity.tile);
+			entity.sprite = this.scene.add.sprite(x, y, this.mapKey, entity.tile);
 			entity.sprite.setOrigin(0);
 			if (entity.tint) {
 				entity.sprite.tint = entity.tint;
@@ -226,7 +238,7 @@ const dungeon = {
 			// ranged attack
 			const x = this.map.tileToWorldX(attacker.x);
 			const y = this.map.tileToWorldX(attacker.y);
-			const sprite = dungeon.scene.add.sprite(x, y, "tiles", rangedAttack).setOrigin(0);
+			const sprite = dungeon.scene.add.sprite(x, y, this.mapKey, rangedAttack).setOrigin(0);
 
 			if (tint) {
 				sprite.tint = tint;
@@ -269,13 +281,10 @@ const dungeon = {
 		this.msgs = this.msgs.slice(0, 8);
 	},
 	gameOver: function () {
-		console.log("gameOver] before loading", this.scene.scene);
 		this.ui.scene.stop();
 		this.scene.scene.start("game-over-scene");
-		console.log("gameOver] after loading", this.scene.scene);
 	},
 	questComplete: function () {
-		console.log('questComplete')
 		this.ui.scene.stop();
 		this.scene.scene.start("quest-complete-scene");
 	},

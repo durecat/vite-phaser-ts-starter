@@ -13,7 +13,6 @@ export default class Amulet extends GenericItem {
 	}
 
 	turn() {
-    console.log("amulet.js", dungeon.player.items);
 		if (dungeon.player.items.includes(this)) {
 			dungeon.questComplete();
 		}
