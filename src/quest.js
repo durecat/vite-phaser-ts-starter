@@ -2,7 +2,7 @@ import Amulet from "./items/amulet";
 import dungeon from "./dungeon";
 import tm from "./turnManager";
 
-export function addAmulet(x = NULL, y = NULL) {
+export function addAmulet(x = null, y = null) {
   if( x && y ) {
     tm.addEntity(new Amulet(x, y));
 		console.log(`amulet added to`, x, y);

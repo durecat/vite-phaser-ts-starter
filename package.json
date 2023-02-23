@@ -1,9 +1,9 @@
 {
-  "name": "ld48",
-  "version": "0.0.0",
+  "name": "dure-nano-dungeon",
+  "version": "1.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "serve": "vite preview"
   },
   "devDependencies": {
