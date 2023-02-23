@@ -4,6 +4,7 @@ import classes from "./classes.js";
 import { getRandomItem } from "./items.js";
 import { getRandomEnemy } from "./enemies.js";
 import Stairs from "./items/stairs.js";
+import { addAmulet } from "./quest.js";
 
 const world = {
 	key: "world-scene",
@@ -46,6 +47,7 @@ const world = {
 		// Load game entities
 		if (!dungeon.player) {
 			dungeon.player = new classes[dungeon.hero](p.x, p.y)
+			addAmulet(p.x + 1, p.y + 1);
 		} else {
 			dungeon.player.x = p.x;
 			dungeon.player.y = p.y;

@@ -1,6 +1,7 @@
 import PF from "pathfinding"
 import tm from "./turnManager.js";
 import BSPDungeon from "./bspdungeon.js";
+import quest from "./quest.js";
 
 const dungeon = {
 	msgs: [],
@@ -42,6 +43,9 @@ const dungeon = {
 		const map = scene.make.tilemap(config);
 		const tileset = map.addTilesetImage("tiles", "tiles", this.tileSize, this.tileSize, 0, 1);
 		this.map = map.createLayer(0, tileset, 0, 0);
+
+		// This will cause all the functions to run for each level that is initialized
+		quest.forEach((f) => f());
 	},
 	cleanup: function () {
 		this.msgs = [];
@@ -264,12 +268,17 @@ const dungeon = {
 		this.msgs.unshift(text);
 		this.msgs = this.msgs.slice(0, 8);
 	},
-	gameOver: function() {
+	gameOver: function () {
 		console.log("gameOver] before loading", this.scene.scene);
-		this.ui.scene.stop()
-		this.scene.scene.start("game-over-scene")
+		this.ui.scene.stop();
+		this.scene.scene.start("game-over-scene");
 		console.log("gameOver] after loading", this.scene.scene);
-	}
+	},
+	questComplete: function () {
+		console.log('questComplete')
+		this.ui.scene.stop();
+		this.scene.scene.start("quest-complete-scene");
+	},
 };
 
 export default dungeon;

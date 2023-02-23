@@ -4,6 +4,7 @@ import ui from "./ui";
 import world from "./world";
 import gameOver from "./gameOver";
 import intro from "./intro";
+import questComplete from "./questComplete";
 
 const GameConfig = {
 	title: "ExampleGame",
@@ -13,7 +14,7 @@ const GameConfig = {
 	height: 50 * 16,
 	type: Phaser.AUTO,
 	parent: "app",
-	scene: [intro, world, ui, gameOver],
+	scene: [intro, world, ui, gameOver, questComplete],
 	input: {
 		keyboard: true,
 	},
