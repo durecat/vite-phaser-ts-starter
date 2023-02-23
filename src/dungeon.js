@@ -264,6 +264,12 @@ const dungeon = {
 		this.msgs.unshift(text);
 		this.msgs = this.msgs.slice(0, 8);
 	},
+	gameOver: function() {
+		console.log("gameOver] before loading", this.scene.scene);
+		this.ui.scene.stop()
+		this.scene.scene.start("game-over-scene")
+		console.log("gameOver] after loading", this.scene.scene);
+	}
 };
 
 export default dungeon;

@@ -1,7 +1,7 @@
 const tm = {
 	entities: new Set(),
 	addEntity: (entity) => tm.entities.add(entity),
-	removeEntity: (entity) => tm.entities.remove(entity),
+	removeEntity: (entity) => tm.entities.delete(entity),
 	removeAllEntities: () => (tm.entities = new Set()),
 	refresh: () => {
 		tm.entities.forEach((e) => e.refresh());

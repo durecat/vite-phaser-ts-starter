@@ -239,8 +239,7 @@ export default class BasicHero extends Taggable {
 	}
 
 	onDestroy() {
-		alert("OMG! you died!");
-		location.reload();
+		dungeon.gameOver()
 	}
 
 	createUI(config) {

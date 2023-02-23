@@ -2,6 +2,7 @@ import "phaser";
 import "../assets/style.css";
 import ui from "./ui";
 import world from "./world";
+import gameOver from "./gameOver";
 
 const GameConfig = {
 	title: "ExampleGame",
@@ -11,7 +12,7 @@ const GameConfig = {
 	height: 50 * 16,
 	type: Phaser.AUTO,
 	parent: "app",
-	scene: [world, ui],
+	scene: [world, ui, gameOver],
 	input: {
 		keyboard: true,
 	},
@@ -40,7 +41,12 @@ export class Game extends Phaser.Game {
 	}
 }
 
-window.addEventListener("load", () => {
+// window.addEventListener("load", () => {
+// 	// Expose `_game` to allow debugging, mute button and fullscreen button
+// 	window._game = new Game(GameConfig);
+// });
+
+document.fonts.load('10pt "Doomed"').then(() => {
 	// Expose `_game` to allow debugging, mute button and fullscreen button
 	window._game = new Game(GameConfig);
 });

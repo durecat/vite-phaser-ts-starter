@@ -7,9 +7,12 @@ export default class Elf extends BasicHero {
     super(x, y)
 
     this.name = "Elf"
-    this.movementPoints = 4
-    this.actionPoints = 3
-    this.healthPoints = 20
+    // this.movementPoints = 4
+    // this.actionPoints = 3
+    // this.healthPoints = 20
+    this.actionPoints = 1
+    this.movementPoints = 1
+    this.healthPoints = 1
     this.tile = 56
 
     this.items.push(new Bow())
