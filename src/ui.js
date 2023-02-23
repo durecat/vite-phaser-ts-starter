@@ -3,7 +3,7 @@ import tm from "./turnManager.js";
 
 const ui = {
 	key: "ui-scene",
-	active: true,
+	active: false,
 	create: function () {
 		this.createdUI = false;
 

@@ -7,7 +7,7 @@ import Stairs from "./items/stairs.js";
 
 const world = {
 	key: "world-scene",
-	active: true,
+	active: false,
 	preload: function () {
 		this.load.spritesheet("tiles", "../assets/colored_transparent.png", {
 			frameWidth: 16,
@@ -45,11 +45,7 @@ const world = {
 
 		// Load game entities
 		if (!dungeon.player) {
-			dungeon.player = new classes.Elf(p.x, p.y);
-			// dungeon.player = new classes.Warrior(p.x, p.y)
-			// dungeon.player = new classes.Dwarf(p.x, p.y)
-			// dungeon.player = new classes.Cleric(p.x, p.y)
-			// dungeon.player = new classes.Wizard(p.x, p.y);
+			dungeon.player = new classes[dungeon.hero](p.x, p.y)
 		} else {
 			dungeon.player.x = p.x;
 			dungeon.player.y = p.y;
